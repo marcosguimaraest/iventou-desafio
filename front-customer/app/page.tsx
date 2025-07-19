@@ -143,7 +143,7 @@ export default function Home() {
 
   const handlePayment = () => {
     const method = paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito';
-    // alert(`Pedido realizado com sucesso!\nMétodo: ${method}\nTotal: R$ ${getTotalPrice().toFixed(2)}`);
+    alert(`Pedido realizado com sucesso!\nMétodo: ${method}\nTotal: R$ ${getTotalPrice().toFixed(2)}`);
     
     const orderItems = cartItems.map((item):OrderItem => {
       return {
