@@ -25,26 +25,27 @@ jobs:
           version: 10.x
 
       - name: Install dependencies
+        working-directory: backend
         run: pnpm install
 
       - name: Generate Prisma client
+        working-directory: backend
         run: pnpm prisma generate
-        env:
-          DATABASE_URL: postgresql://docker:docker@localhost:5432/iventou_test
 
       - name: Run database migrations
+        working-directory: backend
         run: pnpm prisma migrate deploy
-        env:
-          DATABASE_URL: postgresql://docker:docker@localhost:5432/iventou_test
 
       - name: Run linting
+        working-directory: backend
         run: pnpm lint
 
       - name: Build application
+        working-directory: backend
         run: pnpm build
 
       - name: Run tests
+        working-directory: backend
         run: pnpm test
         env:
           NODE_ENV: test
-          DATABASE_URL: postgresql://docker:docker@localhost:5432/iventou_test
