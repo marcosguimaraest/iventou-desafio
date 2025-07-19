@@ -10,16 +10,10 @@ export class OrderCreateUseCase
 {
   constructor(private readonly orderRepository: IOrderRepository) {}
 
-  async execute(dto: CreateOrderDto): Promise<OrderEntity> {
+  async execute(dto: CreateOrderDto): Promise<any> {
     const { orderItems, ...orderData } = dto;
 
-    const order = await this.orderRepository.create({
-      ...orderData,
-      orderItems: orderItems.map(item => ({
-        ...item,
-        status: false,
-      })),
-    });
+    const order = await this.orderRepository.createOrderWithItems(orderData, orderItems);
 
     return order;
   }

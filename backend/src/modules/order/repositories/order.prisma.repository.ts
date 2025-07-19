@@ -46,4 +46,32 @@ export class OrderPrismaRepository extends IOrderRepository {
 
     return orders as OrderEntity[];
   }
+
+  async createOrderWithItems(orderData: any, orderItems: any[]): Promise<any> {
+    const order = await this.prismaService.order.create({
+      data: {
+        ...orderData,
+        orderItems: {
+          create: orderItems.map(item => ({
+            ...item,
+            status: false,
+          })),
+        },
+      },
+      include: {
+        orderItems: {
+          include: {
+            product: {
+              include: {
+                shopper: true,
+              },
+            },
+          },
+        },
+        user: true,
+      },
+    });
+
+    return order;
+  }
 } 
