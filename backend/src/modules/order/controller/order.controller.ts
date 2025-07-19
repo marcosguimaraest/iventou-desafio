@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { CreateOrderDto } from 'src/domain/dtos';
 import { OrderCreateUseCase } from '../use-cases/create/order-create.use-case';
 import { OrderDeleteUseCase } from '../use-cases/delete/order-delete.use-case';
@@ -57,4 +65,4 @@ export class OrderController {
   FindOrderItems(@Param('orderId') orderId: string) {
     return this.orderFindItemsUseCase.execute(orderId);
   }
-} 
+}

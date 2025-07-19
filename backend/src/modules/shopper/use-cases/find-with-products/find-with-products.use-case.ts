@@ -11,4 +11,4 @@ export class ShopperFindWithProductsUseCase
   async execute(shopperId: string): Promise<any> {
     return this.shopperRepository.findShopperWithProducts(shopperId);
   }
-} 
+}

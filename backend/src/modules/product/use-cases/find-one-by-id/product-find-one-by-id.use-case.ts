@@ -8,9 +8,7 @@ import { ResourceNotFoundError } from 'src/domain/errors/resource-not-found';
 export class ProductFindOneByIdUseCase
   implements IBaseUseCase<ProductEntity, string>
 {
-  constructor(
-    private readonly productRepository: IProductRepository
-  ) {}
+  constructor(private readonly productRepository: IProductRepository) {}
 
   async execute(id: string): Promise<ProductEntity> {
     const product = await this.productRepository.findById(id);

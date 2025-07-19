@@ -11,4 +11,4 @@ export class EventFindWithShoppersAndProductsUseCase
   async execute(eventId: string): Promise<any> {
     return this.eventRepository.findEventWithShoppersAndProducts(eventId);
   }
-} 
+}

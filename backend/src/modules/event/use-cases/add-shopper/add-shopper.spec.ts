@@ -31,8 +31,10 @@ describe('EventAddShopperUseCase', () => {
 
     const result = await useCase.execute({ eventId, shopperId });
 
-    expect(mockEventRepository.addShopperToEvent).toHaveBeenCalledWith(eventId, shopperId);
+    expect(mockEventRepository.addShopperToEvent).toHaveBeenCalledWith(
+      eventId,
+      shopperId,
+    );
     expect(result).toEqual(expectedEvent);
   });
-}); 
- 
+});

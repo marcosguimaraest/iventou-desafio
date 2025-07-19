@@ -17,5 +17,4 @@ export class EventAddShopperUseCase
   async execute(dto: AddShopperToEventDto): Promise<EventEntity> {
     return this.eventRepository.addShopperToEvent(dto.eventId, dto.shopperId);
   }
-} 
- 
+}

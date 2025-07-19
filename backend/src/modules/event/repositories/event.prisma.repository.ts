@@ -4,7 +4,10 @@ import { EventEntity } from 'src/domain/entities';
 
 @Injectable()
 export class EventPrismaRepository extends IEventRepository {
-  async addShopperToEvent(eventId: string, shopperId: string): Promise<EventEntity> {
+  async addShopperToEvent(
+    eventId: string,
+    shopperId: string,
+  ): Promise<EventEntity> {
     await this.prismaService.event.update({
       where: { id: eventId },
       data: {
@@ -17,7 +20,10 @@ export class EventPrismaRepository extends IEventRepository {
     return this.findById(eventId);
   }
 
-  async removeShopperFromEvent(eventId: string, shopperId: string): Promise<EventEntity> {
+  async removeShopperFromEvent(
+    eventId: string,
+    shopperId: string,
+  ): Promise<EventEntity> {
     await this.prismaService.event.update({
       where: { id: eventId },
       data: {
@@ -30,7 +36,9 @@ export class EventPrismaRepository extends IEventRepository {
     return this.findById(eventId);
   }
 
-  async findEventWithShoppers(eventId: string): Promise<EventEntity & { shoppers: any[] }> {
+  async findEventWithShoppers(
+    eventId: string,
+  ): Promise<EventEntity & { shoppers: any[] }> {
     const event = await this.prismaService.event.findUnique({
       where: { id: eventId },
       include: {

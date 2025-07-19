@@ -15,6 +15,9 @@ export class EventRemoveShopperUseCase
   constructor(private readonly eventRepository: IEventRepository) {}
 
   async execute(dto: RemoveShopperFromEventDto): Promise<EventEntity> {
-    return this.eventRepository.removeShopperFromEvent(dto.eventId, dto.shopperId);
+    return this.eventRepository.removeShopperFromEvent(
+      dto.eventId,
+      dto.shopperId,
+    );
   }
-} 
+}

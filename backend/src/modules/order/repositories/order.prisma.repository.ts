@@ -52,7 +52,7 @@ export class OrderPrismaRepository extends IOrderRepository {
       data: {
         ...orderData,
         orderItems: {
-          create: orderItems.map(item => ({
+          create: orderItems.map((item) => ({
             ...item,
             status: false,
           })),
@@ -74,4 +74,4 @@ export class OrderPrismaRepository extends IOrderRepository {
 
     return order;
   }
-} 
+}

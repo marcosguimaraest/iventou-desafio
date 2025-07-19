@@ -9,7 +9,9 @@ let productFindOneByIdUseCase: ProductFindOneByIdUseCase;
 describe('ProductFindOneByIdUseCase', () => {
   beforeEach(() => {
     productRepository = new ProductInMemoryRepository();
-    productFindOneByIdUseCase = new ProductFindOneByIdUseCase(productRepository);
+    productFindOneByIdUseCase = new ProductFindOneByIdUseCase(
+      productRepository,
+    );
   });
 
   it('should be able to find a product by id', async () => {
@@ -23,5 +25,5 @@ describe('ProductFindOneByIdUseCase', () => {
     const result = await productFindOneByIdUseCase.execute(product.id);
 
     expect(result).toEqual(product);
-  })
+  });
 });

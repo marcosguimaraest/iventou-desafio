@@ -39,7 +39,7 @@ describe('OrderFindItemByIdUseCase', () => {
         shopperId: 'shopper-123',
         shopper: {
           id: 'shopper-123',
-          name: 'McDonald\'s',
+          name: "McDonald's",
           email: 'mcdonalds@test.com',
           password: 'password',
           createdAt: new Date(),
@@ -63,11 +63,15 @@ describe('OrderFindItemByIdUseCase', () => {
       },
     };
 
-    mockOrderRepository.prismaService.orderItem.findUnique.mockResolvedValue(expectedOrderItem);
+    mockOrderRepository.prismaService.orderItem.findUnique.mockResolvedValue(
+      expectedOrderItem,
+    );
 
     const result = await useCase.execute(orderItemId);
 
-    expect(mockOrderRepository.prismaService.orderItem.findUnique).toHaveBeenCalledWith({
+    expect(
+      mockOrderRepository.prismaService.orderItem.findUnique,
+    ).toHaveBeenCalledWith({
       where: { id: orderItemId },
       include: {
         product: {
@@ -84,4 +88,4 @@ describe('OrderFindItemByIdUseCase', () => {
     });
     expect(result).toEqual(expectedOrderItem);
   });
-}); 
+});

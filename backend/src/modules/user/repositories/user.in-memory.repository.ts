@@ -15,7 +15,7 @@ export class UserInMemoryRepository extends IUserRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     this.users.push(user);
     return user;
   }
@@ -35,7 +35,7 @@ export class UserInMemoryRepository extends IUserRepository {
 
     return user;
   }
-  
+
   async findAll(): Promise<UserEntity[]> {
     return this.users;
   }
@@ -49,7 +49,7 @@ export class UserInMemoryRepository extends IUserRepository {
 
     const deletedUser = this.users[userIndex];
     this.users.splice(userIndex, 1);
-    
+
     return deletedUser;
   }
 }

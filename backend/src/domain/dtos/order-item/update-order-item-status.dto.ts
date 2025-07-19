@@ -8,4 +8,4 @@ export class UpdateOrderItemStatusDto {
   @IsNotEmpty()
   @IsBoolean()
   status: boolean;
-} 
+}

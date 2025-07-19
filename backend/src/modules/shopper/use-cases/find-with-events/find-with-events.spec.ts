@@ -18,7 +18,7 @@ describe('ShopperFindWithEventsUseCase', () => {
     const shopperId = 'shopper-123';
     const expectedShopper = {
       id: shopperId,
-      name: 'McDonald\'s',
+      name: "McDonald's",
       email: 'mcdonalds@test.com',
       password: 'password',
       createdAt: new Date(),
@@ -43,11 +43,15 @@ describe('ShopperFindWithEventsUseCase', () => {
       ],
     };
 
-    mockShopperRepository.findShopperWithEvents.mockResolvedValue(expectedShopper);
+    mockShopperRepository.findShopperWithEvents.mockResolvedValue(
+      expectedShopper,
+    );
 
     const result = await useCase.execute(shopperId);
 
-    expect(mockShopperRepository.findShopperWithEvents).toHaveBeenCalledWith(shopperId);
+    expect(mockShopperRepository.findShopperWithEvents).toHaveBeenCalledWith(
+      shopperId,
+    );
     expect(result).toEqual(expectedShopper);
   });
-}); 
+});

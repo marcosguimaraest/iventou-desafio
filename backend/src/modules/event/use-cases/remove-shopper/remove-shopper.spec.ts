@@ -30,7 +30,10 @@ describe('EventRemoveShopperUseCase', () => {
 
     const result = await useCase.execute({ eventId, shopperId });
 
-    expect(mockEventRepository.removeShopperFromEvent).toHaveBeenCalledWith(eventId, shopperId);
+    expect(mockEventRepository.removeShopperFromEvent).toHaveBeenCalledWith(
+      eventId,
+      shopperId,
+    );
     expect(result).toEqual(expectedEvent);
   });
-}); 
+});

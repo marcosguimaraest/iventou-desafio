@@ -10,27 +10,27 @@ export class OrderUpdateItemStatusUseCase
   constructor(private readonly orderRepository: IOrderRepository) {}
 
   async execute(dto: UpdateOrderItemStatusDto): Promise<any> {
-    const updatedOrderItem = await this.orderRepository.prismaService.orderItem.update({
-      where: { id: dto.orderItemId },
-      data: {
-        status: dto.status,
-        updatedAt: new Date(),
-      },
-      include: {
-        product: {
-          include: {
-            shopper: true,
+    const updatedOrderItem =
+      await this.orderRepository.prismaService.orderItem.update({
+        where: { id: dto.orderItemId },
+        data: {
+          status: dto.status,
+          updatedAt: new Date(),
+        },
+        include: {
+          product: {
+            include: {
+              shopper: true,
+            },
+          },
+          order: {
+            include: {
+              user: true,
+            },
           },
         },
-        order: {
-          include: {
-            user: true,
-          },
-        },
-      },
-    });
+      });
 
     return updatedOrderItem;
   }
-} 
- 
+}

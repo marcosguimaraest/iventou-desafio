@@ -4,9 +4,7 @@ import { UserEntity } from 'src/domain/entities';
 import { IBaseUseCase } from 'src/common/interfaces';
 
 @Injectable()
-export class UserFindAllUseCase
-  implements IBaseUseCase<UserEntity[], null>
-{
+export class UserFindAllUseCase implements IBaseUseCase<UserEntity[], null> {
   constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(): Promise<UserEntity[]> {

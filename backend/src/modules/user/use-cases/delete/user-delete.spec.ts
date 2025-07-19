@@ -15,7 +15,7 @@ describe('UserDeleteUseCase', () => {
     const user = await userRepository.create({
       name: 'John Doe',
       email: 'john@example.com',
-      password: '123456'
+      password: '123456',
     });
 
     await userDeleteUseCase.execute(user.id);

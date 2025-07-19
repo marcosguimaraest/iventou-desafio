@@ -8,7 +8,9 @@ let shopperFindOneByIdUseCase: ShopperFindOneByIdUseCase;
 describe('ShopperFindOneByIdUseCase', () => {
   beforeEach(() => {
     shopperRepository = new ShopperInMemoryRepository();
-    shopperFindOneByIdUseCase = new ShopperFindOneByIdUseCase(shopperRepository);
+    shopperFindOneByIdUseCase = new ShopperFindOneByIdUseCase(
+      shopperRepository,
+    );
   });
 
   it('should be able to find a shopper by id', async () => {
@@ -21,5 +23,5 @@ describe('ShopperFindOneByIdUseCase', () => {
     const result = await shopperFindOneByIdUseCase.execute(shopper.id);
 
     expect(result).toEqual(shopper);
-  })
+  });
 });

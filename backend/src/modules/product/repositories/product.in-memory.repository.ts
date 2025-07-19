@@ -14,7 +14,7 @@ export class ProductInMemoryRepository extends IProductRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     this.products.push(product);
     return product;
   }
@@ -28,13 +28,15 @@ export class ProductInMemoryRepository extends IProductRepository {
 
     return product;
   }
-  
+
   async findAll(): Promise<ProductEntity[]> {
     return this.products;
   }
 
   async delete(id: string): Promise<ProductEntity> {
-    const productIndex = this.products.findIndex((product) => product.id === id);
+    const productIndex = this.products.findIndex(
+      (product) => product.id === id,
+    );
 
     if (productIndex === -1) {
       return null as any;
@@ -42,7 +44,7 @@ export class ProductInMemoryRepository extends IProductRepository {
 
     const deletedProduct = this.products[productIndex];
     this.products.splice(productIndex, 1);
-    
+
     return deletedProduct;
   }
 }

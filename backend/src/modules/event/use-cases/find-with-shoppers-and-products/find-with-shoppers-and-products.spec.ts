@@ -26,7 +26,7 @@ describe('EventFindWithShoppersAndProductsUseCase', () => {
       shoppers: [
         {
           id: 'shopper-1',
-          name: 'McDonald\'s',
+          name: "McDonald's",
           email: 'mcdonalds@test.com',
           password: 'password',
           createdAt: new Date(),
@@ -46,11 +46,15 @@ describe('EventFindWithShoppersAndProductsUseCase', () => {
       ],
     };
 
-    mockEventRepository.findEventWithShoppersAndProducts.mockResolvedValue(expectedEvent);
+    mockEventRepository.findEventWithShoppersAndProducts.mockResolvedValue(
+      expectedEvent,
+    );
 
     const result = await useCase.execute(eventId);
 
-    expect(mockEventRepository.findEventWithShoppersAndProducts).toHaveBeenCalledWith(eventId);
+    expect(
+      mockEventRepository.findEventWithShoppersAndProducts,
+    ).toHaveBeenCalledWith(eventId);
     expect(result).toEqual(expectedEvent);
   });
-}); 
+});

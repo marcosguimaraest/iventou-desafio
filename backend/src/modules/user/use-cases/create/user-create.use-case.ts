@@ -10,12 +10,12 @@ import { IUserRepository } from '../../repositories/iuser.repository';
 export class UserCreateUseCase
   implements IBaseUseCase<UserEntity, CreateUserDto>
 {
-  constructor(
-    private readonly userRepository: IUserRepository
-  ) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(data: CreateUserDto): Promise<UserEntity> {
-    const emailAlreadyExists = await this.userRepository.findByEmail(data.email);
+    const emailAlreadyExists = await this.userRepository.findByEmail(
+      data.email,
+    );
 
     if (emailAlreadyExists) {
       throw new EmailAlreadyExistsError();

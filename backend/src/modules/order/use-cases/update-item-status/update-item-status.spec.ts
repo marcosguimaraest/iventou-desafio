@@ -40,7 +40,7 @@ describe('OrderUpdateItemStatusUseCase', () => {
         shopperId: 'shopper-123',
         shopper: {
           id: 'shopper-123',
-          name: 'McDonald\'s',
+          name: "McDonald's",
           email: 'mcdonalds@test.com',
           password: 'password',
           createdAt: new Date(),
@@ -64,11 +64,15 @@ describe('OrderUpdateItemStatusUseCase', () => {
       },
     };
 
-    mockOrderRepository.prismaService.orderItem.update.mockResolvedValue(expectedOrderItem);
+    mockOrderRepository.prismaService.orderItem.update.mockResolvedValue(
+      expectedOrderItem,
+    );
 
     const result = await useCase.execute({ orderItemId, status });
 
-    expect(mockOrderRepository.prismaService.orderItem.update).toHaveBeenCalledWith({
+    expect(
+      mockOrderRepository.prismaService.orderItem.update,
+    ).toHaveBeenCalledWith({
       where: { id: orderItemId },
       data: {
         status: true,
@@ -89,4 +93,4 @@ describe('OrderUpdateItemStatusUseCase', () => {
     });
     expect(result).toEqual(expectedOrderItem);
   });
-}); 
+});

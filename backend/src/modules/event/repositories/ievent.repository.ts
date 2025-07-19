@@ -6,8 +6,16 @@ export abstract class IEventRepository extends RepositoryFactory<EventEntity> {
     super('event');
   }
 
-  abstract addShopperToEvent(eventId: string, shopperId: string): Promise<EventEntity>;
-  abstract removeShopperFromEvent(eventId: string, shopperId: string): Promise<EventEntity>;
-  abstract findEventWithShoppers(eventId: string): Promise<EventEntity & { shoppers: any[] }>;
+  abstract addShopperToEvent(
+    eventId: string,
+    shopperId: string,
+  ): Promise<EventEntity>;
+  abstract removeShopperFromEvent(
+    eventId: string,
+    shopperId: string,
+  ): Promise<EventEntity>;
+  abstract findEventWithShoppers(
+    eventId: string,
+  ): Promise<EventEntity & { shoppers: any[] }>;
   abstract findEventWithShoppersAndProducts(eventId: string): Promise<any>;
 }

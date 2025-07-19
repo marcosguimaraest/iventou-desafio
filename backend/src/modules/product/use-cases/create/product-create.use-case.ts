@@ -8,9 +8,7 @@ import { IProductRepository } from '../../repositories/iproduct.repository';
 export class ProductCreateUseCase
   implements IBaseUseCase<ProductEntity, CreateProductDto>
 {
-  constructor(
-    private readonly productRepository: IProductRepository
-  ) {}
+  constructor(private readonly productRepository: IProductRepository) {}
 
   async execute(data: CreateProductDto): Promise<ProductEntity> {
     const product = await this.productRepository.create({

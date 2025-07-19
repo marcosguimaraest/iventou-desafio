@@ -8,9 +8,7 @@ import { ResourceNotFoundError } from 'src/domain/errors/resource-not-found';
 export class UserFindOneByIdUseCase
   implements IBaseUseCase<UserEntity, string>
 {
-  constructor(
-    private readonly userRepository: IUserRepository
-  ) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(id: string): Promise<UserEntity> {
     const user = await this.userRepository.findById(id);

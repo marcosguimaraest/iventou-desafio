@@ -26,7 +26,7 @@ describe('EventFindWithShoppersUseCase', () => {
       shoppers: [
         {
           id: 'shopper-1',
-          name: 'McDonald\'s',
+          name: "McDonald's",
           email: 'mcdonalds@test.com',
           password: 'password',
           createdAt: new Date(),
@@ -39,7 +39,9 @@ describe('EventFindWithShoppersUseCase', () => {
 
     const result = await useCase.execute(eventId);
 
-    expect(mockEventRepository.findEventWithShoppers).toHaveBeenCalledWith(eventId);
+    expect(mockEventRepository.findEventWithShoppers).toHaveBeenCalledWith(
+      eventId,
+    );
     expect(result).toEqual(expectedEvent);
   });
-}); 
+});

@@ -21,5 +21,5 @@ describe('UserFindOneByIdUseCase', () => {
     const result = await userFindOneByIdUseCase.execute(user.id);
 
     expect(result).toEqual(user);
-  })
+  });
 });

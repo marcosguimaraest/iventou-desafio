@@ -12,4 +12,4 @@ export class OrderFindOneByIdUseCase
   async execute(id: string): Promise<OrderEntity> {
     return this.orderRepository.findById(id);
   }
-} 
+}

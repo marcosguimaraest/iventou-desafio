@@ -32,4 +32,4 @@ import { OrderPrismaRepository } from './repositories/order.prisma.repository';
     OrderFindItemByIdUseCase,
   ],
 })
-export class OrderModule {} 
+export class OrderModule {}

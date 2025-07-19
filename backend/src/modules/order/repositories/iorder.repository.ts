@@ -8,5 +8,8 @@ export abstract class IOrderRepository extends RepositoryFactory<OrderEntity> {
 
   abstract findOrderWithItems(orderId: string): Promise<any>;
   abstract findOrdersByUser(userId: string): Promise<OrderEntity[]>;
-  abstract createOrderWithItems(orderData: any, orderItems: any[]): Promise<any>;
-} 
+  abstract createOrderWithItems(
+    orderData: any,
+    orderItems: any[],
+  ): Promise<any>;
+}

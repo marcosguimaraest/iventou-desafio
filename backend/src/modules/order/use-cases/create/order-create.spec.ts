@@ -67,7 +67,7 @@ describe('OrderCreateUseCase', () => {
             shopperId: 'shopper-1',
             shopper: {
               id: 'shopper-1',
-              name: 'McDonald\'s',
+              name: "McDonald's",
               email: 'mcdonalds@test.com',
               password: 'password',
               createdAt: new Date(),
@@ -125,8 +125,8 @@ describe('OrderCreateUseCase', () => {
           quantity: 1,
           priceInCents: 2000,
         },
-      ]
+      ],
     );
     expect(result).toEqual(expectedOrder);
   });
-}); 
+});

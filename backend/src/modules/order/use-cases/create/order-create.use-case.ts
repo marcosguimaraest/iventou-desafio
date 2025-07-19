@@ -13,8 +13,11 @@ export class OrderCreateUseCase
   async execute(dto: CreateOrderDto): Promise<any> {
     const { orderItems, ...orderData } = dto;
 
-    const order = await this.orderRepository.createOrderWithItems(orderData, orderItems);
+    const order = await this.orderRepository.createOrderWithItems(
+      orderData,
+      orderItems,
+    );
 
     return order;
   }
-} 
+}
