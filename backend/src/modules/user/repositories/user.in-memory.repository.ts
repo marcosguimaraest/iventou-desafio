@@ -54,7 +54,6 @@ export class UserInMemoryRepository extends IUserRepository {
   }
 
   async findUserWithOrdersAndItems(id: string): Promise<UserEntity | null> {
-    // Retorna o usuário normalmente, já que é in-memory e não tem orders reais
     return this.findById(id);
   }
 }
