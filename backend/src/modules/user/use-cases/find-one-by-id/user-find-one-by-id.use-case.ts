@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IUserRepository } from '../../repositories/iuser.repository';
 import { UserEntity } from 'src/domain/entities';
 import { IBaseUseCase } from 'src/common/interfaces';
+import { ResourceNotFoundError } from 'src/domain/errors/resource-not-found';
 
 @Injectable()
 export class UserFindOneByIdUseCase
@@ -13,6 +14,10 @@ export class UserFindOneByIdUseCase
 
   async execute(id: string): Promise<UserEntity> {
     const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      throw new ResourceNotFoundError();
+    }
 
     return user;
   }
