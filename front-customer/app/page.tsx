@@ -42,11 +42,12 @@ const products: Product[] = [
     id: "1",
     name: "Pizza Margherita Artesanal",
     description: "Placeholder",
-    priceInCents: 42.90,
+    priceInCents: 4290,
     shoppers: shopper
   },
 ];
 
+  
 export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -293,7 +294,7 @@ export default function Home() {
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-lg font-medium">Total:</span>
                   <span className="text-xl font-bold text-purple-600">
-                    R$ {((selectedProduct.price) * quantity).toFixed(2)}
+                    R$ {((selectedProduct.priceInCents / 100) * quantity).toFixed(2)}
                   </span>
                 </div>
                 
@@ -343,7 +344,7 @@ export default function Home() {
                 {cartItems.map((item) => (
                   <div key={item.product.id} className="flex items-center space-x-4 p-4 border rounded-lg">
                     <img
-                      src={item.product.image}
+                      src={image}
                       alt={item.product.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
