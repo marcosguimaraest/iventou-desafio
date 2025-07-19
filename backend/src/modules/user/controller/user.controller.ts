@@ -12,12 +12,11 @@ import {
   Param,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/domain/dtos';
 
-@Controller()
-export class UserResolver {
+@Controller('user')
+export class UserController {
   constructor(
     private readonly userCreateUseCase: UserCreateUseCase,
     private readonly userFindAllUseCase: UserFindAllUseCase,
@@ -47,7 +46,7 @@ export class UserResolver {
     return this.userUpdateUseCase.execute({ ...updateUserDto, id });
   }
 
-  @Delete()
+  @Delete(':id')
   DeleteUser(@Param('id') id: string) {
     return this.userDeleteUseCase.execute(id);
   }
