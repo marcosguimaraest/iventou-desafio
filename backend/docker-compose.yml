@@ -16,9 +16,8 @@ services:
     build: .
     ports:
       - '3333:3333'
-    environment:
-      - DATABASE_URL=postgresql://docker:docker@postgresql:5432/iventou
-      - NODE_ENV=production
+    env_file:
+      - .env
     depends_on:
       - postgresql
 
