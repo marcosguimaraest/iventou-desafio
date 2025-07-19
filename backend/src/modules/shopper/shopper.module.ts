@@ -4,6 +4,8 @@ import { ShopperFindAllUseCase } from './use-cases/find-all/shopper-find-all.use
 import { ShopperDeleteUseCase } from './use-cases/delete/shopper-delete.use-case';
 import { ShopperController } from './controller/shopper.controller';
 import { ShopperFindOneByIdUseCase } from './use-cases/find-one-by-id/shopper-find-one-by-id.use-case';
+import { ShopperFindWithProductsUseCase } from './use-cases/find-with-products/find-with-products.use-case';
+import { ShopperFindWithEventsUseCase } from './use-cases/find-with-events/find-with-events.use-case';
 import { IShopperRepository } from './repositories/ishopper.repository';
 import { ShopperPrismaRepository } from './repositories/shopper.prisma.repository';
 
@@ -14,6 +16,8 @@ import { ShopperPrismaRepository } from './repositories/shopper.prisma.repositor
     ShopperFindAllUseCase,
     ShopperFindOneByIdUseCase,
     ShopperDeleteUseCase,
+    ShopperFindWithProductsUseCase,
+    ShopperFindWithEventsUseCase,
     { provide: IShopperRepository, useClass: ShopperPrismaRepository },
   ],
   controllers: [ShopperController],
@@ -22,6 +26,8 @@ import { ShopperPrismaRepository } from './repositories/shopper.prisma.repositor
     ShopperFindAllUseCase,
     ShopperFindOneByIdUseCase,
     ShopperDeleteUseCase,
+    ShopperFindWithProductsUseCase,
+    ShopperFindWithEventsUseCase,
   ],
 })
 export class ShopperModule {}

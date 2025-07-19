@@ -11,5 +11,5 @@ export class CreateEventDto {
 
   @IsNotEmpty()
   @IsString()
-  eventOwnerId: string;
+  ownerId: string;
 }

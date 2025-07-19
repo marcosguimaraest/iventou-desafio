@@ -23,7 +23,7 @@ export class ProductInMemoryRepository extends IProductRepository {
     const product = this.products.find((product) => product.id === id);
 
     if (!product) {
-      throw new Error('Product not found');
+      return null as any;
     }
 
     return product;
@@ -37,7 +37,7 @@ export class ProductInMemoryRepository extends IProductRepository {
     const productIndex = this.products.findIndex((product) => product.id === id);
 
     if (productIndex === -1) {
-      throw new Error('Product not found');
+      return null as any;
     }
 
     const deletedProduct = this.products[productIndex];

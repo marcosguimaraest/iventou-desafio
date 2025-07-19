@@ -23,7 +23,7 @@ export class EventInMemoryRepository extends IEventRepository {
     const event = this.events.find((event) => event.id === id);
 
     if (!event) {
-      throw new Error('Event not found');
+      return null as any;
     }
 
     return event;
@@ -44,5 +44,37 @@ export class EventInMemoryRepository extends IEventRepository {
     this.events.splice(eventIndex, 1);
 
     return deletedEvent;
+  }
+
+  async addShopperToEvent(eventId: string, shopperId: string): Promise<EventEntity> {
+    const event = this.events.find((event) => event.id === eventId);
+    if (!event) {
+      return null as any;
+    }
+    return event;
+  }
+
+  async removeShopperFromEvent(eventId: string, shopperId: string): Promise<EventEntity> {
+    const event = this.events.find((event) => event.id === eventId);
+    if (!event) {
+      return null as any;
+    }
+    return event;
+  }
+
+  async findEventWithShoppers(eventId: string): Promise<EventEntity & { shoppers: any[] }> {
+    const event = this.events.find((event) => event.id === eventId);
+    if (!event) {
+      return null as any;
+    }
+    return { ...event, shoppers: [] };
+  }
+
+  async findEventWithShoppersAndProducts(eventId: string): Promise<any> {
+    const event = this.events.find((event) => event.id === eventId);
+    if (!event) {
+      return null as any;
+    }
+    return { ...event, shoppers: [] };
   }
 }
