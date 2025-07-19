@@ -1,33 +1,73 @@
-"use client";
+"use client"
 
-import { useState, useRef, useEffect } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { QrCode, CheckCircle, Clock, User, UtensilsCrossed, ShoppingBag } from 'lucide-react';
+import { useState, useRef, useEffect } from "react"
+import { Html5QrcodeScanner } from "html5-qrcode"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import {
+  QrCode,
+  CheckCircle,
+  Clock,
+  User,
+  UtensilsCrossed,
+  ShoppingBag,
+} from "lucide-react"
+import axios from "axios"
 
-interface Product {
-  nome: string;
-  preco: number;
-  quantidade: number;
+interface Shopper {
+  id: string
+  name: string
+  email: string
+}
+
+interface OrderItem {
+  id: string
+  quantity: number
+  priceInCents: number
+  productId: string
+  status: boolean
 }
 
 interface Order {
-  id: string;
-  customer: string;
-  produtos: Product[];
-  total: number;
-  timestamp: string;
+  totalInCents: number
+  orderItems: OrderItem[]
+  userId: string
 }
 
-export default function FoodStandPage() {
-  const [isScanning, setIsScanning] = useState(false);
-  const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
-  const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
-  const [totalOrders, setTotalOrders] = useState(0);
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+interface User {
+  id: string
+  name: string
+  email: string
+  orders: Order[]
+}
 
+interface Product {
+  id: string
+  name: string
+  description: string
+  priceInCents: number
+  shoppers: Shopper[]
+}
+
+const shoppers: Shopper[] = [
+  {
+    id: "legal",
+    name: "loja",
+    email: "lojalegal@gmail.com",
+  },
+]
+
+export default function FoodStandPage() {
+  const [isScanning, setIsScanning] = useState(false)
+  const [currentOrder, setCurrentOrder] = useState<Order | null>(null)
+  const [completedOrder, setCompletedOrder] = useState<Order | null>(null)
+  const [totalOrders, setTotalOrders] = useState(0)
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null)
+  const [user, setUser] = useState<User>()
+  const [orderItems, setOrderItems] = useState<OrderItem[]>()
+
+<<<<<<< HEAD
  useEffect(() => {
   if (isScanning) {
     const config = {
@@ -74,29 +114,151 @@ export default function FoodStandPage() {
     scannerRef.current?.clear();
   };
 }, [isScanning]);
+=======
+  useEffect(() => {
+    if (isScanning) {
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+      }
+
+      scannerRef.current = new Html5QrcodeScanner("qr-reader", config, false)
+
+      scannerRef.current.render(
+        (decodedText: string) => {
+          // Simular dados do pedido baseado no QRCode
+          axios
+            .get("http://localhost:3333/user/" + decodedText)
+            .then((response) => {
+              setUser(response.data())
+            })
+            .catch((err) => {
+              console.log("??")
+            })
+
+          // const orderItemsToBeRetrieved = user?.orders.map((item) => {
+          //   return item.orderItems.map((item):OrderItem | null => {
+          //     if (item.status === false)
+          //       return (item)
+          //     return (null)
+          //   })
+          // });
+
+          const orderItemsToBeRetrieved: OrderItem[] =
+            user?.orders.flatMap((order) =>
+              order.orderItems.filter((item) => item.status === false),
+            ) ?? []
+          
+          setOrderItems(orderItemsToBeRetrieved)
+
+          let products: Product[] = [];
+          let productsSample: (Product | null)[] = [];
+          orderItems?.forEach( async (item) => {
+            let product: Product | null = null;            
+            await axios.get("http://localhost:3333/product/" + item.productId)
+              .then((response) => {
+                product = response.data();
+              })
+              .catch(err => {
+                product = null
+              })
+            productsSample.push(product)
+          })
+          products = productsSample.map((item):Product[] => {
+            if (item != null)
+                return item;
+            return ()
+          })
+          // const produtos: Product[] = [
+          //   {
+          //     name: "Hambúrguer Artesanal",
+          //     priceInCents: 1000,
+          //     description: "legal",
+          //     shoppers: shoppers,
+          //     id: "fodase",
+          //   },
+          //   {
+          //     name: "Batata Frita",
+          //     priceInCents: 1000,
+          //     description: "legal",
+          //     shoppers: shoppers,
+          //     id: "fodase",
+          //   },
+          //   {
+          //     name: "Refrigerante",
+          //     priceInCents: 1000,
+          //     description: "legal",
+          //     shoppers: shoppers,
+          //     id: "fodase",
+          //   },
+          // ]
+
+          const total = produtos.reduce(
+            (sum, produto) => sum + produ * produto.quantidade,
+            0,
+          )
+
+          const mockOrder: Order = {
+            id: decodedText.slice(-6),
+            customer: `Cliente #${Math.floor(Math.random() * 1000)}`,
+            produtos: produtos,
+            total: total,
+            timestamp: new Date().toLocaleTimeString("pt-BR"),
+          }
+
+          setCurrentOrder(mockOrder)
+          setIsScanning(false)
+
+          if (scannerRef.current) {
+            scannerRef.current.clear()
+          }
+        },
+        (error: string) => {
+          // Silenciar erros de scan contínuo
+        },
+      )
+    }
+
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.clear()
+      }
+    }
+  }, [isScanning])
+>>>>>>> cf7f0ac (feat: wtf?)
 
   const startScanning = () => {
-    setIsScanning(true);
-  };
+    setIsScanning(true)
+  }
 
   const stopScanning = () => {
-    setIsScanning(false);
+    setIsScanning(false)
     if (scannerRef.current) {
-      scannerRef.current.clear();
+      scannerRef.current.clear()
     }
-  };
+  }
 
   const completeOrder = () => {
     if (currentOrder) {
       //setCompletedOrder(currentOrder);
-      setCurrentOrder(null);
-      setTotalOrders(prev => prev + 1);
+      orderItems?.forEach((item) => {
+        axios.put("http://localhost:3333/item/"+item.id+"/retrieve")
+          .then((response) => {
+            console.log("foi")
+          })
+          .catch((err) => {
+            console.log(":(")
+          })
+      })
+      setCurrentOrder(null)
+      setTotalOrders((prev) => prev + 1)
     }
-  };
+  }
 
   const cancelOrder = () => {
-    setCurrentOrder(null);
-  };
+    setCurrentOrder(null)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
@@ -109,7 +271,9 @@ export default function FoodStandPage() {
                 <UtensilsCrossed className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Sabor & Festa</h1>
+                <h1 className="text-lg font-bold text-gray-900">
+                  Sabor & Festa
+                </h1>
                 <p className="text-xs text-gray-600">Barraca de Lanches</p>
               </div>
             </div>
@@ -133,8 +297,13 @@ export default function FoodStandPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700">Pedido #{currentOrder.id}</span>
-                <Badge variant="secondary" className="bg-purple-100 text-purple-800 text-xs">
+                <span className="font-semibold text-gray-700">
+                  Pedido #{currentOrder.id}
+                </span>
+                <Badge
+                  variant="secondary"
+                  className="bg-purple-100 text-purple-800 text-xs"
+                >
                   Aguardando
                 </Badge>
               </div>
@@ -142,35 +311,47 @@ export default function FoodStandPage() {
                 <User className="h-4 w-4" />
                 <span>{currentOrder.customer}</span>
               </div>
-              
+
               <div className="space-y-3">
                 <p className="font-semibold text-sm text-gray-700">Produtos:</p>
                 <div className="space-y-2">
                   {currentOrder.produtos.map((produto, index) => (
-                    <div key={index} className="flex justify-between items-center bg-white p-3 rounded-lg border">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center bg-white p-3 rounded-lg border"
+                    >
                       <div>
-                        <p className="font-medium text-gray-800">{produto.nome}</p>
-                        <p className="text-sm text-gray-600">Qtd: {produto.quantidade}</p>
+                        <p className="font-medium text-gray-800">
+                          {produto.nome}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Qtd: {produto.quantidade}
+                        </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-gray-800">R$ {produto.preco.toFixed(2)}</p>
+                        <p className="font-semibold text-gray-800">
+                          R$ {produto.preco.toFixed(2)}
+                        </p>
                         <p className="text-xs text-gray-500">
-                          Total: R$ {(produto.preco * produto.quantidade).toFixed(2)}
+                          Total: R${" "}
+                          {(produto.preco * produto.quantidade).toFixed(2)}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               <div className="border-t pt-3">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="font-bold text-base text-gray-900">Total Pago:</span>
+                  <span className="font-bold text-base text-gray-900">
+                    Total Pago:
+                  </span>
                   <span className="font-bold text-xl text-purple-600">
                     R$ {currentOrder.total.toFixed(2)}
                   </span>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Button
                     onClick={completeOrder}
@@ -225,7 +406,10 @@ export default function FoodStandPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div id="qr-reader" className="rounded-lg overflow-hidden"></div>
+                  <div
+                    id="qr-reader"
+                    className="rounded-lg overflow-hidden"
+                  ></div>
                   <Button
                     onClick={stopScanning}
                     variant="outline"
@@ -242,57 +426,64 @@ export default function FoodStandPage() {
 
         {/* Completed Order */}
         {completedOrder && !currentOrder && (
-              <Card className="bg-blue-50 border-2 border-blue-200 shadow-lg mx-auto max-w-md">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base font-bold text-blue-800 flex items-center space-x-2">
-                    <CheckCircle className="h-5 w-5" />
-                    <span>Último Pedido Concluído</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-gray-700">Pedido #{completedOrder.id}</span>
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
-                      Entregue
-                    </Badge>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <User className="h-4 w-4" />
-                    <span>{completedOrder.customer}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Clock className="h-4 w-4" />
-                    <span>{completedOrder.timestamp}</span>
-                  </div>
-                  <div className="border-t pt-3">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-base text-gray-900">Total:</span>
-                      <span className="font-bold text-xl text-blue-600">
-                        R$ {completedOrder.total.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          <Card className="bg-blue-50 border-2 border-blue-200 shadow-lg mx-auto max-w-md">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-bold text-blue-800 flex items-center space-x-2">
+                <CheckCircle className="h-5 w-5" />
+                <span>Último Pedido Concluído</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-700">
+                  Pedido #{completedOrder.id}
+                </span>
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800 text-xs"
+                >
+                  Entregue
+                </Badge>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <User className="h-4 w-4" />
+                <span>{completedOrder.customer}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Clock className="h-4 w-4" />
+                <span>{completedOrder.timestamp}</span>
+              </div>
+              <div className="border-t pt-3">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-base text-gray-900">
+                    Total:
+                  </span>
+                  <span className="font-bold text-xl text-blue-600">
+                    R$ {completedOrder.total.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Instructions */}
         {!currentOrder && (
-            <Card className="bg-gray-50 border-2 border-gray-200 mx-auto max-w-md">
-              <CardHeader>
-                <CardTitle className="text-base font-bold text-purple-800">
-                  Como Usar
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-gray-600">
-                <p>1. Clique em "Iniciar Scanner"</p>
-                <p>2. Aponte a câmera para o QRCode do cliente</p>
-                <p>3. Confira os produtos do pedido</p>
-                <p>4. Clique em "Completar Pedido" após entregar</p>
-              </CardContent>
-            </Card>
+          <Card className="bg-gray-50 border-2 border-gray-200 mx-auto max-w-md">
+            <CardHeader>
+              <CardTitle className="text-base font-bold text-purple-800">
+                Como Usar
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-gray-600">
+              <p>1. Clique em "Iniciar Scanner"</p>
+              <p>2. Aponte a câmera para o QRCode do cliente</p>
+              <p>3. Confira os produtos do pedido</p>
+              <p>4. Clique em "Completar Pedido" após entregar</p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
-  );
+  )
 }
