@@ -13,16 +13,12 @@ export class OrderCreateUseCase
   async execute(dto: CreateOrderDto): Promise<OrderEntity> {
     const { orderItems, ...orderData } = dto;
 
-    const order = await this.orderRepository.prismaService.order.create({
-      data: {
-        ...orderData,
-        orderItems: {
-          create: orderItems.map(item => ({
-            ...item,
-            status: false,
-          })),
-        },
-      },
+    const order = await this.orderRepository.create({
+      ...orderData,
+      orderItems: orderItems.map(item => ({
+        ...item,
+        status: false,
+      })),
     });
 
     return order;

@@ -25,7 +25,7 @@ export class ShopperPrismaRepository extends IShopperRepository {
     });
 
     if (!shopper) {
-      throw new Error('Shopper not found');
+      return null;
     }
 
     return shopper;
@@ -40,7 +40,7 @@ export class ShopperPrismaRepository extends IShopperRepository {
     });
 
     if (!shopper) {
-      throw new Error('Shopper not found');
+      return null;
     }
 
     return shopper;

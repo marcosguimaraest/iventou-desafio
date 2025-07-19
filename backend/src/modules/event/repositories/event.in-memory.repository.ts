@@ -37,7 +37,7 @@ export class EventInMemoryRepository extends IEventRepository {
     const eventIndex = this.events.findIndex((event) => event.id === id);
 
     if (eventIndex === -1) {
-      throw new Error('Event not found');
+      return null as any;
     }
 
     const deletedEvent = this.events[eventIndex];
