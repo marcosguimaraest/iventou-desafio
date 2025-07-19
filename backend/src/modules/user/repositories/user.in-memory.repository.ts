@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UserInMemoryRepository extends IUserRepository {
-  private users: UserEntity[] = [];
+  public users: UserEntity[] = [];
 
   async create<T>(createDto: T): Promise<UserEntity> {
     const user: UserEntity = {
