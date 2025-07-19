@@ -620,18 +620,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              
-              <div className="text-center space-y-2">
-                <h3 className="font-semibold text-gray-900">
-                  João Silva
-                </h3>
-                <p className="text-sm text-gray-500">
-                  ID: #USR123456
-                </p>
-                <Badge variant="secondary" className="text-xs">
-                  Cliente Iventou
-                </Badge>
-              </div>
             </div>
 
             {/* Informações */}
@@ -645,7 +633,7 @@ export default function Home() {
                     Como usar seu QR Code
                   </h4>
                   <ul className="text-sm text-purple-700 space-y-1">
-                    <li>• Mostre este código para o entregador</li>
+                    <li>• Mostre este código para o atendente</li>
                     <li>• Use para identificação rápida</li>
                     <li>• Acumule pontos de fidelidade</li>
                   </ul>
