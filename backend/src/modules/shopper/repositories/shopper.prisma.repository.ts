@@ -35,7 +35,11 @@ export class ShopperPrismaRepository extends IShopperRepository {
     const shopper = await this.prismaService.shopper.findUnique({
       where: { id: shopperId },
       include: {
-        events: true,
+        ShopperEvent: {
+          include: {
+            event: true,
+          },
+        },
       },
     });
 

@@ -8,8 +8,10 @@ export class EventPrismaRepository extends IEventRepository {
     await this.prismaService.event.update({
       where: { id: eventId },
       data: {
-        shoppers: {
-          connect: { id: shopperId },
+        shopperEvents: {
+          create: {
+            shopper: { connect: { id: shopperId } },
+          },
         },
       },
     });
@@ -21,8 +23,10 @@ export class EventPrismaRepository extends IEventRepository {
     await this.prismaService.event.update({
       where: { id: eventId },
       data: {
-        shoppers: {
-          disconnect: { id: shopperId },
+        shopperEvents: {
+          deleteMany: {
+            shopperId: shopperId,
+          },
         },
       },
     });
@@ -34,7 +38,11 @@ export class EventPrismaRepository extends IEventRepository {
     const event = await this.prismaService.event.findUnique({
       where: { id: eventId },
       include: {
-        shoppers: true,
+        shopperEvents: {
+          include: {
+            shopper: true,
+          },
+        },
       },
     });
 
@@ -49,9 +57,13 @@ export class EventPrismaRepository extends IEventRepository {
     const event = await this.prismaService.event.findUnique({
       where: { id: eventId },
       include: {
-        shoppers: {
+        shopperEvents: {
           include: {
-            products: true,
+            shopper: {
+              include: {
+                products: true,
+              },
+            },
           },
         },
       },
