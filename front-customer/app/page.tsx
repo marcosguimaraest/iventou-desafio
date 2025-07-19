@@ -1,0 +1,667 @@
+"use client";
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Star, Clock, Plus, ShoppingCart, Minus, Trash2, X, CreditCard, MapPin, User, Phone, QrCode } from 'lucide-react';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+}
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+const products: Product[] = [
+  {
+    id: 1,
+    name: "Pizza Margherita Artesanal",
+    price: 42.90,
+    image: "https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Pizza",
+  },
+  {
+    id: 2,
+    name: "Hambúrguer Gourmet BBQ",
+    price: 28.90,
+    image: "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Hamburger",
+  },
+  {
+    id: 3,
+    name: "Sushi Combo Premium",
+    price: 85.90,
+    image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Japonesa",
+  },
+  {
+    id: 4,
+    name: "Açaí Premium 500ml",
+    price: 18.90,
+    image: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Açaí",
+  },
+  {
+    id: 5,
+    name: "Poke Bowl Salmão",
+    price: 34.90,
+    image: "https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Saudável",
+  },
+  {
+    id: 6,
+    name: "Pasta Carbonara",
+    price: 32.90,
+    image: "https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Italiana",
+  },
+  {
+    id: 7,
+    name: "Tacos Mexicanos (3un)",
+    price: 24.90,
+    image: "https://images.pexels.com/photos/4958792/pexels-photo-4958792.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Mexicana",
+  },
+  {
+    id: 8,
+    name: "Brownie Chocolate Belga",
+    price: 16.90,
+    image: "https://images.pexels.com/photos/3026804/pexels-photo-3026804.jpeg?auto=compress&cs=tinysrgb&w=400",
+    category: "Sobremesa",
+  }
+];
+
+export default function Home() {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isQrCodeOpen, setIsQrCodeOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix');
+
+  const handleAddToCart = (product: Product) => {
+    setSelectedProduct(product);
+    setQuantity(1);
+    setIsDialogOpen(true);
+  };
+
+  const handleConfirmAdd = () => {
+    if (selectedProduct) {
+      setCartItems(prevItems => {
+        const existingItem = prevItems.find(item => item.product.id === selectedProduct.id);
+        
+        if (existingItem) {
+          return prevItems.map(item =>
+            item.product.id === selectedProduct.id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        } else {
+          return [...prevItems, { product: selectedProduct, quantity }];
+        }
+      });
+      
+      setIsDialogOpen(false);
+      setSelectedProduct(null);
+      setQuantity(1);
+    }
+  };
+
+  const updateCartItemQuantity = (productId: number, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+    
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.product.id === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      )
+    );
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCartItems(prevItems => prevItems.filter(item => item.product.id !== productId));
+  };
+
+  const getTotalItems = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+  };
+
+  const handleCheckout = () => {
+    if (cartItems.length === 0) return;
+    
+    setIsCartOpen(false);
+    setIsPaymentOpen(true);
+  };
+
+  const handlePayment = () => {
+    const method = paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito';
+    alert(`Pedido realizado com sucesso!\nMétodo: ${method}\nTotal: R$ ${getTotalPrice().toFixed(2)}`);
+    setCartItems([]);
+    setIsPaymentOpen(false);
+    setPaymentMethod('pix');
+  };
+
+  const incrementQuantity = () => setQuantity(prev => prev + 1);
+  const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-2xl font-bold text-purple-600">Iventou</h1>
+              <Badge variant="secondary" className="hidden sm:inline-flex">
+                Entrega Grátis
+              </Badge>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => setIsQrCodeOpen(true)}
+                className="hidden sm:flex"
+              >
+                <QrCode className="h-4 w-4 mr-2" />
+                Meu QR
+              </Button>
+              
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => setIsQrCodeOpen(true)}
+                className="sm:hidden h-9 w-9 p-0"
+              >
+                <QrCode className="h-4 w-4" />
+              </Button>
+              
+              <Button 
+                size="sm" 
+                className="bg-purple-600 hover:bg-purple-700 relative"
+                onClick={() => setIsCartOpen(true)}
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Carrinho</span>
+                {getTotalItems() > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                  >
+                    {getTotalItems()}
+                  </Badge>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4">
+        {/* Products Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          {products.map((product) => (
+            <Card key={product.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
+              <div className="relative">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-32 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <CardContent className="p-2 sm:p-3">
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base line-clamp-2 leading-tight">{product.name}</h3>
+                
+                <div className="flex flex-col space-y-2">
+                  <span className="text-base sm:text-lg font-bold text-gray-900">
+                    R$ {product.price.toFixed(2)}
+                  </span>
+                  
+                  <Button 
+                    size="sm"
+                    className="bg-purple-600 hover:bg-purple-700 w-full text-xs sm:text-sm py-1 sm:py-2"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    Adicionar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Dialog para seleção de quantidade */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Adicionar ao carrinho
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedProduct && (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="w-16 h-16 object-cover rounded-lg"
+                />
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-900">{selectedProduct.name}</h3>
+                  <p className="text-lg font-bold text-gray-900">
+                    R$ {selectedProduct.price.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-700">
+                  Quantidade
+                </label>
+                <div className="flex items-center justify-center space-x-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={decrementQuantity}
+                    disabled={quantity <= 1}
+                    className="h-10 w-10 p-0"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  
+                  <span className="text-xl font-semibold w-12 text-center">
+                    {quantity}
+                  </span>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={incrementQuantity}
+                    className="h-10 w-10 p-0"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-lg font-medium">Total:</span>
+                  <span className="text-xl font-bold text-purple-600">
+                    R$ {(selectedProduct.price * quantity).toFixed(2)}
+                  </span>
+                </div>
+                
+                <Button
+                  onClick={handleConfirmAdd}
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Adicionar ao carrinho
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog do Carrinho */}
+      <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col">
+          <DialogHeader className="flex flex-row items-center justify-between">
+            <DialogTitle className="text-xl font-bold">
+              Carrinho de Compras
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCartOpen(false)}
+              className="h-8 w-8 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-y-auto">
+            {cartItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <ShoppingCart className="h-16 w-16 text-gray-300 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Seu carrinho está vazio
+                </h3>
+                <p className="text-gray-500">
+                  Adicione alguns produtos para começar
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {cartItems.map((item) => (
+                  <div key={item.product.id} className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <img
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                    
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900 mb-1">
+                        {item.product.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 mb-2">
+                        R$ {item.product.price.toFixed(2)} cada
+                      </p>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateCartItemQuantity(item.product.id, item.quantity - 1)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        
+                        <span className="text-sm font-medium w-8 text-center">
+                          {item.quantity}
+                        </span>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateCartItemQuantity(item.product.id, item.quantity + 1)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      <p className="font-bold text-gray-900 mb-2">
+                        R$ {(item.product.price * item.quantity).toFixed(2)}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFromCart(item.product.id)}
+                        className="text-red-500 hover:text-red-700 h-8 w-8 p-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {cartItems.length > 0 && (
+            <div className="border-t pt-4 mt-4">
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span>Subtotal ({getTotalItems()} {getTotalItems() === 1 ? 'item' : 'itens'})</span>
+                  <span>R$ {getTotalPrice().toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Taxa de entrega</span>
+                  <span className="text-green-600">Grátis</span>
+                </div>
+                <div className="border-t pt-2">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total</span>
+                    <span className="text-purple-600">R$ {getTotalPrice().toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <Button
+                onClick={handleCheckout}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3"
+                size="lg"
+              >
+                Finalizar Pedido
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Pagamento */}
+      <Dialog open={isPaymentOpen} onOpenChange={setIsPaymentOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center">
+              <CreditCard className="h-5 w-5 mr-2" />
+              Finalizar Pedido
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Resumo do Pedido */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-3">Resumo do Pedido</h3>
+              <div className="space-y-2">
+                {cartItems.map((item) => (
+                  <div key={item.product.id} className="flex justify-between text-sm">
+                    <span>{item.quantity}x {item.product.name}</span>
+                    <span>R$ {(item.product.price * item.quantity).toFixed(2)}</span>
+                  </div>
+                ))}
+                <Separator />
+                <div className="flex justify-between font-bold">
+                  <span>Total</span>
+                  <span className="text-purple-600">R$ {getTotalPrice().toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Opções de Pagamento */}
+            <div className="space-y-4">
+              <h3 className="font-semibold">
+                Escolha a forma de pagamento
+              </h3>
+              
+              <div className="space-y-3">
+                {/* Opção PIX */}
+                <div 
+                  className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                    paymentMethod === 'pix' 
+                      ? 'border-purple-500 bg-purple-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onClick={() => setPaymentMethod('pix')}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-4 h-4 rounded-full border-2 ${
+                      paymentMethod === 'pix' 
+                        ? 'border-purple-500 bg-purple-500' 
+                        : 'border-gray-300'
+                    }`}>
+                      {paymentMethod === 'pix' && (
+                        <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">PIX</span>
+                        <Badge variant="secondary" className="text-xs">Instantâneo</Badge>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        Pagamento rápido e seguro
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Opção Cartão */}
+                <div 
+                  className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                    paymentMethod === 'card' 
+                      ? 'border-purple-500 bg-purple-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onClick={() => setPaymentMethod('card')}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-4 h-4 rounded-full border-2 ${
+                      paymentMethod === 'card' 
+                        ? 'border-purple-500 bg-purple-500' 
+                        : 'border-gray-300'
+                    }`}>
+                      {paymentMethod === 'card' && (
+                        <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                <CreditCard className="h-4 w-4 mr-2" />
+                        <span className="font-medium">Cartão de Crédito</span>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        Cartão •••• 1234 já cadastrado
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsPaymentOpen(false);
+                  setIsCartOpen(true);
+                }}
+                className="flex-1"
+              >
+                Voltar ao Carrinho
+              </Button>
+              <Button
+                onClick={handlePayment}
+                className="flex-1 bg-purple-600 hover:bg-purple-700"
+              >
+                {paymentMethod === 'pix' ? (
+                  <>Pagar com PIX</>
+                ) : (
+                  <>
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Pagar com Cartão
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal do QR Code do Usuário */}
+      <Dialog open={isQrCodeOpen} onOpenChange={setIsQrCodeOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center justify-center">
+              <QrCode className="h-5 w-5 mr-2" />
+              Meu QR Code
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* QR Code */}
+            <div className="flex flex-col items-center space-y-4">
+              <div className="bg-white p-6 rounded-lg border-2 border-gray-200 shadow-sm">
+                <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center relative overflow-hidden">
+                  {/* QR Code Pattern Simulation */}
+                  <div className="absolute inset-0 grid grid-cols-12 gap-0">
+                    {Array.from({ length: 144 }, (_, i) => (
+                      <div
+                        key={i}
+                        className={`${
+                          Math.random() > 0.5 ? 'bg-black' : 'bg-white'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Corner squares */}
+                  <div className="absolute top-2 left-2 w-8 h-8 border-2 border-black">
+                    <div className="w-4 h-4 bg-black m-1"></div>
+                  </div>
+                  <div className="absolute top-2 right-2 w-8 h-8 border-2 border-black">
+                    <div className="w-4 h-4 bg-black m-1"></div>
+                  </div>
+                  <div className="absolute bottom-2 left-2 w-8 h-8 border-2 border-black">
+                    <div className="w-4 h-4 bg-black m-1"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center space-y-2">
+                <h3 className="font-semibold text-gray-900">
+                  João Silva
+                </h3>
+                <p className="text-sm text-gray-500">
+                  ID: #USR123456
+                </p>
+                <Badge variant="secondary" className="text-xs">
+                  Cliente Iventou
+                </Badge>
+              </div>
+            </div>
+
+            {/* Informações */}
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="flex items-start space-x-3">
+                <div className="bg-purple-100 p-2 rounded-full">
+                  <QrCode className="h-4 w-4 text-purple-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-purple-900 mb-1">
+                    Como usar seu QR Code
+                  </h4>
+                  <ul className="text-sm text-purple-700 space-y-1">
+                    <li>• Mostre este código para o entregador</li>
+                    <li>• Use para identificação rápida</li>
+                    <li>• Acumule pontos de fidelidade</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {/* Botão de Fechar */}
+            <Button
+              onClick={() => setIsQrCodeOpen(false)}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
