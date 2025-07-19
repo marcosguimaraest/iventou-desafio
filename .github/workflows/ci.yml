@@ -28,14 +28,6 @@ jobs:
         working-directory: backend
         run: pnpm install
 
-      - name: Generate Prisma client
-        working-directory: backend
-        run: pnpm prisma generate
-
-      - name: Run database migrations
-        working-directory: backend
-        run: pnpm prisma migrate deploy
-
       - name: Run linting
         working-directory: backend
         run: pnpm lint
@@ -47,5 +39,3 @@ jobs:
       - name: Run tests
         working-directory: backend
         run: pnpm test
-        env:
-          NODE_ENV: test
