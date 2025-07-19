@@ -6,6 +6,7 @@ import { UserUpdateUseCase } from './use-cases/update/user-update.use-case';
 import { IUserRepository } from './repositories/iuser.repository';
 import { UserRepository } from './repositories/user.repository';
 import { UserDeleteUseCase } from './use-cases/delete/user-delete.use-case';
+import { UserController } from './controller/user.controller';
 
 @Module({
   imports: [],
@@ -17,6 +18,7 @@ import { UserDeleteUseCase } from './use-cases/delete/user-delete.use-case';
     UserDeleteUseCase,
     { provide: IUserRepository, useClass: UserRepository },
   ],
+  controllers: [UserController],
   exports: [
     UserCreateUseCase,
     UserFindAllUseCase,
