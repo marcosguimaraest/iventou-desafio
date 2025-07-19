@@ -15,7 +15,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Order Order[]
+  orders Order[]
 }
 
 model Owner {
@@ -26,7 +26,7 @@ model Owner {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Event Event[]
+  events Event[]
 }
 
 model Shopper {
@@ -38,6 +38,7 @@ model Shopper {
   updatedAt DateTime @updatedAt
 
   products Product[]
+  events   Event[]
 }
 
 model Product {
@@ -48,9 +49,10 @@ model Product {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  shoppers  Shopper     @relation(fields: [shopperId], references: [id])
+  shopper   Shopper @relation(fields: [shopperId], references: [id])
   shopperId String
-  OrderItem OrderItem[]
+
+  orderItems OrderItem[]
 }
 
 model Event {
@@ -60,8 +62,10 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  eventOwnerId String
-  EventOwner   Owner  @relation(fields: [eventOwnerId], references: [id])
+  owner   Owner  @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  shoppers Shopper[]
 }
 
 model Order {
@@ -70,9 +74,10 @@ model Order {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user      User        @relation(fields: [userId], references: [id])
-  userId    String
-  OrderItem OrderItem[]
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  orderItems OrderItem[]
 }
 
 model OrderItem {
