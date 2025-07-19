@@ -7,6 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  SHOPPER
+  EVENT_MANAGER
+  ATTENDEE
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Shopper Shopper?
+  Event   Event[]
+}
+
+model Shopper {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  User   User   @relation(fields: [userId], references: [id])
+
+  products Product[]
+}
+
 model Product {
-  id String @id @default(uuid())
+  id           String   @id @default(uuid())
+  name         String
+  description  String
+  priceInCents Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  shoppers Shopper[]
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  eventManagerId String
+  EventManager   User   @relation(fields: [eventManagerId], references: [id])
 }
