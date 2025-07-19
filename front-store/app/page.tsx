@@ -90,7 +90,7 @@ export default function FoodStandPage() {
 
   const completeOrder = () => {
     if (currentOrder) {
-      setCompletedOrder(currentOrder);
+      //setCompletedOrder(currentOrder);
       setCurrentOrder(null);
       setTotalOrders(prev => prev + 1);
     }
