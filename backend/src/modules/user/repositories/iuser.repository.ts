@@ -5,4 +5,6 @@ export abstract class IUserRepository extends RepositoryFactory<UserEntity> {
   constructor() {
     super('user');
   }
+
+  abstract findByEmail(email: string): Promise<UserEntity | null>;
 }
