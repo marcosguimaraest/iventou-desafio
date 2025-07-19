@@ -35,3 +35,4 @@ describe('EventAddShopperUseCase', () => {
     expect(result).toEqual(expectedEvent);
   });
 }); 
+ 
