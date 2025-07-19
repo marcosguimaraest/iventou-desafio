@@ -171,7 +171,7 @@ export default function FoodStandPage() {
     if (currentOrder) {
       //setCompletedOrder(currentOrder);
       orderItems?.forEach((item) => {
-        axios.put("http://localhost:3333/item/" + item.id + "/retrieve")
+        axios.put("http://localhost:3333/order/item/" + item.id + "/retrieve")
           .then((response) => {
             console.log("foi")
           })
