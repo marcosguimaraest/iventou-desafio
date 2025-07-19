@@ -28,54 +28,52 @@ export default function FoodStandPage() {
   const [totalOrders, setTotalOrders] = useState(0);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  useEffect(() => {
-    if (isScanning) {
-      const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0,
-      };
+ useEffect(() => {
+  if (isScanning) {
+    const config = {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+      aspectRatio: 1.0,
+    };
 
-      scannerRef.current = new Html5QrcodeScanner("qr-reader", config, false);
-      
-      scannerRef.current.render(
-        (decodedText: string) => {
-          // Simular dados do pedido baseado no QRCode
-          const produtos: Product[] = [
-            { nome: 'Hambúrguer Artesanal', preco: 15.90, quantidade: 1 },
-            { nome: 'Batata Frita', preco: 8.00, quantidade: 1 },
-            { nome: 'Refrigerante', preco: 4.50, quantidade: 2 }
-          ];
-          
+    scannerRef.current = new Html5QrcodeScanner("qr-reader", config, false);
+
+    scannerRef.current.render(
+      async (decodedText: string) => {
+        try {
+          const response = await fetch(`http://localhost:3000/api/pedidos/${decodedText}`);
+          if (!response.ok) throw new Error('Erro ao buscar pedido');
+
+          const data = await response.json();
+
+          const produtos: Product[] = data.produtos;
           const total = produtos.reduce((sum, produto) => sum + (produto.preco * produto.quantidade), 0);
-          
-          const mockOrder: Order = {
-            id: decodedText.slice(-6),
-            customer: `Cliente #${Math.floor(Math.random() * 1000)}`,
-            produtos: produtos,
-            total: total,
+
+          const order: Order = {
+            id: data.id || decodedText.slice(-6),
+            customer: data.customer || `Cliente #${Math.floor(Math.random() * 1000)}`,
+            produtos,
+            total,
             timestamp: new Date().toLocaleTimeString('pt-BR'),
           };
 
-          setCurrentOrder(mockOrder);
+          setCurrentOrder(order);
           setIsScanning(false);
-          
-          if (scannerRef.current) {
-            scannerRef.current.clear();
-          }
-        },
-        (error: string) => {
-          // Silenciar erros de scan contínuo
+          scannerRef.current?.clear();
+        } catch (error) {
+          console.error('Erro ao buscar pedido:', error);
         }
-      );
-    }
-
-    return () => {
-      if (scannerRef.current) {
-        scannerRef.current.clear();
+      },
+      (error: string) => {
+        // Silencia erros
       }
-    };
-  }, [isScanning]);
+    );
+  }
+
+  return () => {
+    scannerRef.current?.clear();
+  };
+}, [isScanning]);
 
   const startScanning = () => {
     setIsScanning(true);
