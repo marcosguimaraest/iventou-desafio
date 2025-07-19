@@ -1,10 +1,9 @@
-import { ProductCreateUseCase } from '../use-cases/create/product-create.use-case';
-import { ProductFindAllUseCase } from '../use-cases/find-all/product-find-all.use-case';
-import { ProductFindOneByIdUseCase } from '../use-cases/find-one-by-id/product-find-one-by-id.use-case';
-import { ProductDeleteUseCase } from '../use-cases/delete/product-delete.use-case';
-import { IsPublic } from 'src/common/decorators';
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CreateProductDto } from 'src/domain/dtos';
+import { ProductCreateUseCase } from '../use-cases/create/product-create.use-case';
+import { ProductDeleteUseCase } from '../use-cases/delete/product-delete.use-case';
+import { ProductFindAllUseCase } from '../use-cases/find-all/product-find-all.use-case';
+import { ProductFindOneByIdUseCase } from '../use-cases/find-one-by-id/product-find-one-by-id.use-case';
 
 @Controller('product')
 export class ProductController {
@@ -15,7 +14,6 @@ export class ProductController {
     private readonly productDeleteUseCase: ProductDeleteUseCase,
   ) {}
 
-  @IsPublic()
   @Post()
   CreateProduct(@Body() createProductDto: CreateProductDto) {
     return this.productCreateUseCase.execute(createProductDto);
