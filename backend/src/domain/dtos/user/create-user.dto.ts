@@ -1,5 +1,5 @@
-import { IsDate, IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { IsCpf } from "src/common/validators";
+import { Role } from "@prisma/client";
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateUserDto {
 	@IsNotEmpty()
@@ -11,15 +11,10 @@ export class CreateUserDto {
 	email: string;
 
 	@IsNotEmpty()
-	@IsDate()
-	birthDate: Date;
-
-	@IsCpf()
-	@IsNotEmpty()
-	@IsString()
-	cpf: string;
-
-	@IsNotEmpty()
 	@IsString()
 	password: string;
+
+	@IsNotEmpty()
+	@IsEnum(Role)
+	role: Role;
 }
