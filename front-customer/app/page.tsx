@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +8,27 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Star, Clock, Plus, ShoppingCart, Minus, Trash2, X, CreditCard, MapPin, User, Phone, QrCode } from 'lucide-react';
+import axios from 'axios'
+
+interface Shopper {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface OrderItem {
+  id: string;
+  quantity: number;
+  priceInCents: number;
+  product: Product;
+}
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
-  price: number;
-  image: string;
-  category: string;
+  description: string;
+  priceInCents: number;
+  shoppers: Shopper[];
 }
 
 interface CartItem {
@@ -22,65 +36,25 @@ interface CartItem {
   quantity: number;
 }
 
+const shopper: Shopper[] = [
+  {
+    id: "1",
+    email: "shopper@gmail.com",
+    name: "shopper"
+  }
+]
+const image: string = "https://www.svgrepo.com/show/36558/sell-product.svg"
 const products: Product[] = [
   {
-    id: 1,
+    id: "1",
     name: "Pizza Margherita Artesanal",
-    price: 42.90,
-    image: "https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Pizza",
+    description: "Placeholder",
+    priceInCents: 4290,
+    shoppers: shopper
   },
-  {
-    id: 2,
-    name: "Hambúrguer Gourmet BBQ",
-    price: 28.90,
-    image: "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Hamburger",
-  },
-  {
-    id: 3,
-    name: "Sushi Combo Premium",
-    price: 85.90,
-    image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Japonesa",
-  },
-  {
-    id: 4,
-    name: "Açaí Premium 500ml",
-    price: 18.90,
-    image: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Açaí",
-  },
-  {
-    id: 5,
-    name: "Poke Bowl Salmão",
-    price: 34.90,
-    image: "https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Saudável",
-  },
-  {
-    id: 6,
-    name: "Pasta Carbonara",
-    price: 32.90,
-    image: "https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Italiana",
-  },
-  {
-    id: 7,
-    name: "Tacos Mexicanos (3un)",
-    price: 24.90,
-    image: "https://images.pexels.com/photos/4958792/pexels-photo-4958792.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Mexicana",
-  },
-  {
-    id: 8,
-    name: "Brownie Chocolate Belga",
-    price: 16.90,
-    image: "https://images.pexels.com/photos/3026804/pexels-photo-3026804.jpeg?auto=compress&cs=tinysrgb&w=400",
-    category: "Sobremesa",
-  }
 ];
 
+  
 export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -91,6 +65,20 @@ export default function Home() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix');
 
+  const [product, setProducts] = useState<Product[]>()
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3333/api/products')
+      .then((response) => {
+        setProducts(response.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
+
+  
   const handleAddToCart = (product: Product) => {
     setSelectedProduct(product);
     setQuantity(1);
@@ -119,7 +107,7 @@ export default function Home() {
     }
   };
 
-  const updateCartItemQuantity = (productId: number, newQuantity: number) => {
+  const updateCartItemQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
       return;
@@ -134,7 +122,7 @@ export default function Home() {
     );
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (productId: string) => {
     setCartItems(prevItems => prevItems.filter(item => item.product.id !== productId));
   };
 
@@ -143,7 +131,7 @@ export default function Home() {
   };
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    return cartItems.reduce((total, item) => total + ((item.product.priceInCents / 100) * item.quantity), 0);
   };
 
   const handleCheckout = () => {
@@ -156,9 +144,29 @@ export default function Home() {
   const handlePayment = () => {
     const method = paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito';
     alert(`Pedido realizado com sucesso!\nMétodo: ${method}\nTotal: R$ ${getTotalPrice().toFixed(2)}`);
-    setCartItems([]);
-    setIsPaymentOpen(false);
-    setPaymentMethod('pix');
+    
+    const orderItems = cartItems.map((item):OrderItem => {
+      return {
+        id: "placeholder",
+        quantity: item.quantity,
+        priceInCents: item.product.priceInCents * quantity,
+        product: item.product
+      }
+    })
+
+    axios
+      .post("http://localhost:3333/api/products", orderItems)
+        .then((response) => {
+          if (response.status === 200)
+          {
+            setCartItems([]);
+            setIsPaymentOpen(false);
+            setPaymentMethod('pix');
+          }
+        })
+        .catch((err) => {
+          alert("Problema com o pedido, tente novamente!");
+        })
   };
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
@@ -225,7 +233,7 @@ export default function Home() {
             <Card key={product.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
               <div className="relative">
                 <img
-                  src={product.image}
+                  src={image}
                   alt={product.name}
                   className="w-full h-32 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -236,7 +244,7 @@ export default function Home() {
                 
                 <div className="flex flex-col space-y-2">
                   <span className="text-base sm:text-lg font-bold text-gray-900">
-                    R$ {product.price.toFixed(2)}
+                    R$ {(product.priceInCents / 100).toFixed(2)}
                   </span>
                   
                   <Button 
@@ -267,14 +275,14 @@ export default function Home() {
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <img
-                  src={selectedProduct.image}
+                  src={image}
                   alt={selectedProduct.name}
                   className="w-16 h-16 object-cover rounded-lg"
                 />
                 <div className="flex-1">
                   <h3 className="font-medium text-gray-900">{selectedProduct.name}</h3>
                   <p className="text-lg font-bold text-gray-900">
-                    R$ {selectedProduct.price.toFixed(2)}
+                    R$ {(selectedProduct.priceInCents / 100).toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -313,7 +321,7 @@ export default function Home() {
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-lg font-medium">Total:</span>
                   <span className="text-xl font-bold text-purple-600">
-                    R$ {(selectedProduct.price * quantity).toFixed(2)}
+                    R$ {((selectedProduct.priceInCents / 100) * quantity).toFixed(2)}
                   </span>
                 </div>
                 
@@ -363,7 +371,7 @@ export default function Home() {
                 {cartItems.map((item) => (
                   <div key={item.product.id} className="flex items-center space-x-4 p-4 border rounded-lg">
                     <img
-                      src={item.product.image}
+                      src={image}
                       alt={item.product.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
@@ -373,7 +381,7 @@ export default function Home() {
                         {item.product.name}
                       </h3>
                       <p className="text-sm text-gray-500 mb-2">
-                        R$ {item.product.price.toFixed(2)} cada
+                        R$ {(item.product.priceInCents / 100).toFixed(2)} cada
                       </p>
                       
                       <div className="flex items-center space-x-2">
@@ -403,7 +411,7 @@ export default function Home() {
                     
                     <div className="text-right">
                       <p className="font-bold text-gray-900 mb-2">
-                        R$ {(item.product.price * item.quantity).toFixed(2)}
+                        R$ {((item.product.priceInCents / 100) * item.quantity).toFixed(2)}
                       </p>
                       <Button
                         variant="ghost"
@@ -469,7 +477,7 @@ export default function Home() {
                 {cartItems.map((item) => (
                   <div key={item.product.id} className="flex justify-between text-sm">
                     <span>{item.quantity}x {item.product.name}</span>
-                    <span>R$ {(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span>R$ {((item.product.priceInCents / 100) * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
                 <Separator />
