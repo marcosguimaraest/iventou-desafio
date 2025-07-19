@@ -1,0 +1,60 @@
+name: Continuous Integration
+
+on: pull_request
+
+jobs:
+  continuous-integration:
+    runs-on: ubuntu-latest
+
+    services:
+      postgresql:
+        image: bitnami/postgresql:latest
+        env:
+          POSTGRESQL_USERNAME: docker
+          POSTGRESQL_PASSWORD: docker
+          POSTGRESQL_DATABASE: iventou_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.x
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate Prisma client
+        run: pnpm prisma generate
+        env:
+          DATABASE_URL: postgresql://docker:docker@localhost:5432/iventou_test
+
+      - name: Run database migrations
+        run: pnpm prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://docker:docker@localhost:5432/iventou_test
+
+      - name: Run linting
+        run: pnpm lint
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Run tests
+        run: pnpm test
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://docker:docker@localhost:5432/iventou_test
