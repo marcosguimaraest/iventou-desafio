@@ -7,24 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  SHOPPER
-  EVENT_MANAGER
-  ATTENDEE
-}
-
 model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
-  role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Shopper Shopper?
-  Event   Event[]
-  Order   Order[]
+  Order Order[]
+}
+
+model Owner {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Event Event[]
 }
 
 model Shopper {
@@ -32,9 +34,6 @@ model Shopper {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  userId String @unique
-  User   User   @relation(fields: [userId], references: [id])
 
   products Product[]
 }
@@ -59,8 +58,8 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  eventManagerId String
-  EventManager   User   @relation(fields: [eventManagerId], references: [id])
+  eventOwnerId String
+  EventOwner   Owner  @relation(fields: [eventOwnerId], references: [id])
 }
 
 model Order {
@@ -73,9 +72,10 @@ model Order {
 }
 
 model OrderItem {
-  id           String @id @default(uuid())
+  id           String  @id @default(uuid())
   quantity     Int
   priceInCents Int
+  status       Boolean
 
   order   Order  @relation(fields: [orderId], references: [id])
   orderId String
