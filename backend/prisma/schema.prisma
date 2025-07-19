@@ -38,8 +38,8 @@ model Shopper {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  products Product[]
-  events   Event[]
+  products     Product[]
+  ShopperEvent ShopperEvent[]
 }
 
 model Product {
@@ -63,10 +63,22 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  owner   Owner  @relation(fields: [ownerId], references: [id])
-  ownerId String
+  owner         Owner          @relation(fields: [ownerId], references: [id])
+  ownerId       String
+  shopperEvents ShopperEvent[] // nova relação
+}
 
-  shoppers Shopper[]
+model ShopperEvent {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  shopper   Shopper @relation(fields: [shopperId], references: [id])
+  shopperId String
+
+  event   Event  @relation(fields: [eventId], references: [id])
+  eventId String
+
+  @@unique([shopperId, eventId]) // previne duplicidade
 }
 
 model Order {
