@@ -39,7 +39,7 @@ export class EventPrismaRepository extends IEventRepository {
     });
 
     if (!event) {
-      throw new Error('Event not found');
+      return null as any;
     }
 
     return event as unknown as EventEntity & { shoppers: any[] };
@@ -58,7 +58,7 @@ export class EventPrismaRepository extends IEventRepository {
     });
 
     if (!event) {
-      throw new Error('Event not found');
+      return null;
     }
 
     return event;

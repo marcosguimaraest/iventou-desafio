@@ -22,7 +22,7 @@ export class OrderPrismaRepository extends IOrderRepository {
     });
 
     if (!order) {
-      throw new Error('Order not found');
+      return null;
     }
 
     return order;
