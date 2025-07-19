@@ -5,7 +5,7 @@ import { IShopperRepository } from './ishopper.repository';
 
 @Injectable()
 export class ShopperInMemoryRepository extends IShopperRepository {
-  private shopper: ShopperEntity[] = [];
+  public shopper: ShopperEntity[] = [];
 
   async create<T>(createDto: T): Promise<ShopperEntity> {
     const shopper: ShopperEntity = {
