@@ -1,10 +1,9 @@
-import { UserCreateUseCase } from '../use-cases/create/user-create.use-case';
-import { UserFindAllUseCase } from '../use-cases/find-all/user-find-all.use-case';
-import { UserFindOneByIdUseCase } from '../use-cases/find-one-by-id/user-find-one-by-id.use-case';
-import { UserDeleteUseCase } from '../use-cases/delete/user-delete.use-case';
-import { IsPublic } from 'src/common/decorators';
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CreateUserDto } from 'src/domain/dtos';
+import { UserCreateUseCase } from '../use-cases/create/user-create.use-case';
+import { UserDeleteUseCase } from '../use-cases/delete/user-delete.use-case';
+import { UserFindAllUseCase } from '../use-cases/find-all/user-find-all.use-case';
+import { UserFindOneByIdUseCase } from '../use-cases/find-one-by-id/user-find-one-by-id.use-case';
 
 @Controller('user')
 export class UserController {
@@ -15,7 +14,6 @@ export class UserController {
     private readonly userDeleteUseCase: UserDeleteUseCase,
   ) {}
 
-  @IsPublic()
   @Post()
   CreateUser(@Body() createUserDto: CreateUserDto) {
     return this.userCreateUseCase.execute(createUserDto);
