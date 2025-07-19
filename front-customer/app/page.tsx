@@ -16,6 +16,13 @@ interface Shopper {
   email: string;
 }
 
+interface OrderItem {
+  id: string;
+  quantity: number;
+  priceInCents: number;
+  product: Product;
+}
+
 interface Product {
   id: string;
   name: string;
@@ -136,10 +143,30 @@ export default function Home() {
 
   const handlePayment = () => {
     const method = paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito';
-    alert(`Pedido realizado com sucesso!\nMétodo: ${method}\nTotal: R$ ${getTotalPrice().toFixed(2)}`);
-    setCartItems([]);
-    setIsPaymentOpen(false);
-    setPaymentMethod('pix');
+    // alert(`Pedido realizado com sucesso!\nMétodo: ${method}\nTotal: R$ ${getTotalPrice().toFixed(2)}`);
+    
+    const orderItems = cartItems.map((item):OrderItem => {
+      return {
+        id: "placeholder",
+        quantity: item.quantity,
+        priceInCents: item.product.priceInCents * quantity,
+        product: item.product
+      }
+    })
+
+    axios
+      .post("http://localhost:3333/api/products", orderItems)
+        .then((response) => {
+          if (response.status === 200)
+          {
+            setCartItems([]);
+            setIsPaymentOpen(false);
+            setPaymentMethod('pix');
+          }
+        })
+        .catch((err) => {
+          alert("Problema com o pedido, tente novamente!");
+        })
   };
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
