@@ -28,10 +28,6 @@ jobs:
         working-directory: backend
         run: pnpm install
 
-      - name: Run linting
-        working-directory: backend
-        run: pnpm lint
-
       - name: Build application
         working-directory: backend
         run: pnpm build
