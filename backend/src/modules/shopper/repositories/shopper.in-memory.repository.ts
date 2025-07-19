@@ -29,7 +29,7 @@ export class ShopperInMemoryRepository extends IShopperRepository {
     const shopper = this.shopper.find((shopper) => shopper.id === id);
 
     if (!shopper) {
-      throw new Error('shopper not found');
+      return null as any;
     }
 
     return shopper;
@@ -43,12 +43,28 @@ export class ShopperInMemoryRepository extends IShopperRepository {
     const shopperIndex = this.shopper.findIndex((shopper) => shopper.id === id);
 
     if (shopperIndex === -1) {
-      throw new Error('shopper not found');
+      return null as any;
     }
 
     const deletedshopper = this.shopper[shopperIndex];
     this.shopper.splice(shopperIndex, 1);
 
     return deletedshopper;
+  }
+
+  async findShopperWithProducts(shopperId: string): Promise<any> {
+    const shopper = this.shopper.find((shopper) => shopper.id === shopperId);
+    if (!shopper) {
+      return null;
+    }
+    return { ...shopper, products: [] };
+  }
+
+  async findShopperWithEvents(shopperId: string): Promise<any> {
+    const shopper = this.shopper.find((shopper) => shopper.id === shopperId);
+    if (!shopper) {
+      return null;
+    }
+    return { ...shopper, events: [] };
   }
 }

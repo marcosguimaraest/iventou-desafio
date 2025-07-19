@@ -1,6 +1,6 @@
 import { Event } from '@prisma/client';
 
-export class EventEntity implements Event {
+export class EventEntity extends Event {
   id: string;
 
   name: string;
@@ -11,5 +11,5 @@ export class EventEntity implements Event {
 
   updatedAt: Date;
 
-  eventOwnerId: string;
+  ownerId: string;
 }

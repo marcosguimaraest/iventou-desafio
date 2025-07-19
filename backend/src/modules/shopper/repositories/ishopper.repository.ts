@@ -7,4 +7,6 @@ export abstract class IShopperRepository extends RepositoryFactory<ShopperEntity
   }
 
   abstract findByEmail(email: string): Promise<ShopperEntity | null>;
+  abstract findShopperWithProducts(shopperId: string): Promise<any>;
+  abstract findShopperWithEvents(shopperId: string): Promise<any>;
 }

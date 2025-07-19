@@ -30,7 +30,7 @@ export class UserInMemoryRepository extends IUserRepository {
     const user = this.users.find((user) => user.id === id);
 
     if (!user) {
-      throw new Error('User not found');
+      return null as any;
     }
 
     return user;
@@ -44,7 +44,7 @@ export class UserInMemoryRepository extends IUserRepository {
     const userIndex = this.users.findIndex((user) => user.id === id);
 
     if (userIndex === -1) {
-      throw new Error('User not found');
+      return null as any;
     }
 
     const deletedUser = this.users[userIndex];

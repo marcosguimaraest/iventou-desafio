@@ -5,6 +5,7 @@ import { ShopperModule } from './modules/shopper/shopper.module';
 import { ProductModule } from './modules/product/product.module';
 import { OwnerModule } from './modules/owner/owner.module';
 import { EventModule } from './modules/event/event.module';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EventModule } from './modules/event/event.module';
     ProductModule,
     OwnerModule,
     EventModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

@@ -23,7 +23,7 @@ export class OwnerInMemoryRepository extends IOwnerRepository {
     const owner = this.owners.find((owner) => owner.id === id);
 
     if (!owner) {
-      throw new Error('Owner not found');
+      return null as any;
     }
 
     return owner;
@@ -37,7 +37,7 @@ export class OwnerInMemoryRepository extends IOwnerRepository {
     const ownerIndex = this.owners.findIndex((owner) => owner.id === id);
 
     if (ownerIndex === -1) {
-      throw new Error('Owner not found');
+      return null as any;
     }
 
     const deletedOwner = this.owners[ownerIndex];

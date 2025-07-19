@@ -15,4 +15,34 @@ export class ShopperPrismaRepository extends IShopperRepository {
 
     return shopper;
   }
+
+  async findShopperWithProducts(shopperId: string): Promise<any> {
+    const shopper = await this.prismaService.shopper.findUnique({
+      where: { id: shopperId },
+      include: {
+        products: true,
+      },
+    });
+
+    if (!shopper) {
+      throw new Error('Shopper not found');
+    }
+
+    return shopper;
+  }
+
+  async findShopperWithEvents(shopperId: string): Promise<any> {
+    const shopper = await this.prismaService.shopper.findUnique({
+      where: { id: shopperId },
+      include: {
+        events: true,
+      },
+    });
+
+    if (!shopper) {
+      throw new Error('Shopper not found');
+    }
+
+    return shopper;
+  }
 }
