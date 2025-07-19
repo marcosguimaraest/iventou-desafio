@@ -24,6 +24,7 @@ model User {
 
   Shopper Shopper?
   Event   Event[]
+  Order   Order[]
 }
 
 model Shopper {
@@ -46,7 +47,9 @@ model Product {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  shoppers Shopper[]
+  shoppers  Shopper     @relation(fields: [shopperId], references: [id])
+  shopperId String
+  OrderItem OrderItem[]
 }
 
 model Event {
@@ -58,4 +61,25 @@ model Event {
 
   eventManagerId String
   EventManager   User   @relation(fields: [eventManagerId], references: [id])
+}
+
+model Order {
+  id           String @id @default(uuid())
+  totalInCents Int
+
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String
+  OrderItem OrderItem[]
+}
+
+model OrderItem {
+  id           String @id @default(uuid())
+  quantity     Int
+  priceInCents Int
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
 }
