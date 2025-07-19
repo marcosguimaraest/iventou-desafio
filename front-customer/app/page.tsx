@@ -69,7 +69,7 @@ const shopper: Shopper[] = [
   },
 ]
 
-const userIdPadrao: string = "775f591f-dca2-4bc9-a838-62db088b15e4"
+const userIdPadrao: string = "c8b04e94-cfbe-40a1-ad2b-1cdfa19c6ede"
 
 const QRCodeGenerator: React.FC = () => {
   return <QRCodeSVG className="mr-2 " value={userIdPadrao} size={150} />
@@ -590,20 +590,18 @@ export default function Home() {
               <div className="space-y-3">
                 {/* Opção PIX */}
                 <div
-                  className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                    paymentMethod === "pix"
+                  className={`border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === "pix"
                       ? "border-purple-500 bg-purple-50"
                       : "border-gray-200 hover:border-gray-300"
-                  }`}
+                    }`}
                   onClick={() => setPaymentMethod("pix")}
                 >
                   <div className="flex items-center space-x-3">
                     <div
-                      className={`w-4 h-4 rounded-full border-2 ${
-                        paymentMethod === "pix"
+                      className={`w-4 h-4 rounded-full border-2 ${paymentMethod === "pix"
                           ? "border-purple-500 bg-purple-500"
                           : "border-gray-300"
-                      }`}
+                        }`}
                     >
                       {paymentMethod === "pix" && (
                         <div className="w-full h-full rounded-full bg-white scale-50"></div>
@@ -625,20 +623,18 @@ export default function Home() {
 
                 {/* Opção Cartão */}
                 <div
-                  className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                    paymentMethod === "card"
+                  className={`border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === "card"
                       ? "border-purple-500 bg-purple-50"
                       : "border-gray-200 hover:border-gray-300"
-                  }`}
+                    }`}
                   onClick={() => setPaymentMethod("card")}
                 >
                   <div className="flex items-center space-x-3">
                     <div
-                      className={`w-4 h-4 rounded-full border-2 ${
-                        paymentMethod === "card"
+                      className={`w-4 h-4 rounded-full border-2 ${paymentMethod === "card"
                           ? "border-purple-500 bg-purple-500"
                           : "border-gray-300"
-                      }`}
+                        }`}
                     >
                       {paymentMethod === "card" && (
                         <div className="w-full h-full rounded-full bg-white scale-50"></div>

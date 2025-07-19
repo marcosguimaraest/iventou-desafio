@@ -13,7 +13,7 @@ export class UserFindOneByIdUseCase
   ) {}
 
   async execute(id: string): Promise<UserEntity> {
-    const user = await this.userRepository.findById(id);
+    const user = await this.userRepository.findUserWithOrdersAndItems(id);
 
     if (!user) {
       throw new ResourceNotFoundError();

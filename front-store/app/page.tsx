@@ -30,9 +30,14 @@ interface OrderItem {
 }
 
 interface Order {
+  id: string
   totalInCents: number
   orderItems: OrderItem[]
   userId: string
+  customer: string
+  produtos: Product[]
+  total: number
+  timestamp: string
 }
 
 interface User {
@@ -67,54 +72,6 @@ export default function FoodStandPage() {
   const [user, setUser] = useState<User>()
   const [orderItems, setOrderItems] = useState<OrderItem[]>()
 
-<<<<<<< HEAD
- useEffect(() => {
-  if (isScanning) {
-    const config = {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0,
-    };
-
-    scannerRef.current = new Html5QrcodeScanner("qr-reader", config, false);
-
-    scannerRef.current.render(
-      async (decodedText: string) => {
-        try {
-          const response = await fetch(`http://localhost:3000/api/pedidos/${decodedText}`);
-          if (!response.ok) throw new Error('Erro ao buscar pedido');
-
-          const data = await response.json();
-
-          const produtos: Product[] = data.produtos;
-          const total = produtos.reduce((sum, produto) => sum + (produto.preco * produto.quantidade), 0);
-
-          const order: Order = {
-            id: data.id || decodedText.slice(-6),
-            customer: data.customer || `Cliente #${Math.floor(Math.random() * 1000)}`,
-            produtos,
-            total,
-            timestamp: new Date().toLocaleTimeString('pt-BR'),
-          };
-
-          setCurrentOrder(order);
-          setIsScanning(false);
-          scannerRef.current?.clear();
-        } catch (error) {
-          console.error('Erro ao buscar pedido:', error);
-        }
-      },
-      (error: string) => {
-        // Silencia erros
-      }
-    );
-  }
-
-  return () => {
-    scannerRef.current?.clear();
-  };
-}, [isScanning]);
-=======
   useEffect(() => {
     if (isScanning) {
       const config = {
@@ -127,92 +84,64 @@ export default function FoodStandPage() {
 
       scannerRef.current.render(
         (decodedText: string) => {
-          // Simular dados do pedido baseado no QRCode
+          // Buscar dados do usuário baseado no QRCode
           axios
             .get("http://localhost:3333/user/" + decodedText)
             .then((response) => {
-              setUser(response.data())
+              const userData = response.data;
+              setUser(userData);
+
+              const orderItemsToBeRetrieved: OrderItem[] =
+                userData.orders.flatMap((order: Order) =>
+                  (order.orderItems ?? []).filter((item) => item.status === false),
+                ) ?? [];
+
+              setOrderItems(orderItemsToBeRetrieved);
+
+              // Buscar produtos para cada item do pedido
+              const fetchProducts = async () => {
+                const productsPromises = orderItemsToBeRetrieved.map(async (item) => {
+                  try {
+                    const response = await axios.get("http://localhost:3333/product/" + item.productId);
+                    return response.data;
+                  } catch (err) {
+                    console.log("Erro ao buscar produto:", err);
+                    return null;
+                  }
+                });
+
+                const productsData = await Promise.all(productsPromises);
+                const validProducts = productsData.filter((item): item is Product => item !== null);
+
+                const total = orderItemsToBeRetrieved.reduce(
+                  (sum, item) => sum + item.priceInCents * item.quantity,
+                  0,
+                );
+
+                const mockOrder: Order = {
+                  id: decodedText.slice(-6),
+                  customer: `Cliente #${Math.floor(Math.random() * 1000)}`,
+                  produtos: validProducts,
+                  total: total / 100, // Converter centavos para reais
+                  timestamp: new Date().toLocaleTimeString("pt-BR"),
+                  totalInCents: total,
+                  orderItems: orderItemsToBeRetrieved,
+                  userId: decodedText,
+                };
+
+                setCurrentOrder(mockOrder);
+                setIsScanning(false);
+
+                if (scannerRef.current) {
+                  scannerRef.current.clear();
+                }
+              };
+
+              fetchProducts();
             })
             .catch((err) => {
-              console.log("??")
-            })
-
-          // const orderItemsToBeRetrieved = user?.orders.map((item) => {
-          //   return item.orderItems.map((item):OrderItem | null => {
-          //     if (item.status === false)
-          //       return (item)
-          //     return (null)
-          //   })
-          // });
-
-          const orderItemsToBeRetrieved: OrderItem[] =
-            user?.orders.flatMap((order) =>
-              order.orderItems.filter((item) => item.status === false),
-            ) ?? []
-          
-          setOrderItems(orderItemsToBeRetrieved)
-
-          let products: Product[] = [];
-          let productsSample: (Product | null)[] = [];
-          orderItems?.forEach( async (item) => {
-            let product: Product | null = null;            
-            await axios.get("http://localhost:3333/product/" + item.productId)
-              .then((response) => {
-                product = response.data();
-              })
-              .catch(err => {
-                product = null
-              })
-            productsSample.push(product)
-          })
-          products = productsSample.map((item):Product[] => {
-            if (item != null)
-                return item;
-            return ()
-          })
-          // const produtos: Product[] = [
-          //   {
-          //     name: "Hambúrguer Artesanal",
-          //     priceInCents: 1000,
-          //     description: "legal",
-          //     shoppers: shoppers,
-          //     id: "fodase",
-          //   },
-          //   {
-          //     name: "Batata Frita",
-          //     priceInCents: 1000,
-          //     description: "legal",
-          //     shoppers: shoppers,
-          //     id: "fodase",
-          //   },
-          //   {
-          //     name: "Refrigerante",
-          //     priceInCents: 1000,
-          //     description: "legal",
-          //     shoppers: shoppers,
-          //     id: "fodase",
-          //   },
-          // ]
-
-          const total = produtos.reduce(
-            (sum, produto) => sum + produ * produto.quantidade,
-            0,
-          )
-
-          const mockOrder: Order = {
-            id: decodedText.slice(-6),
-            customer: `Cliente #${Math.floor(Math.random() * 1000)}`,
-            produtos: produtos,
-            total: total,
-            timestamp: new Date().toLocaleTimeString("pt-BR"),
-          }
-
-          setCurrentOrder(mockOrder)
-          setIsScanning(false)
-
-          if (scannerRef.current) {
-            scannerRef.current.clear()
-          }
+              console.log("Erro ao buscar usuário:", err);
+            });
         },
         (error: string) => {
           // Silenciar erros de scan contínuo
@@ -226,7 +155,6 @@ export default function FoodStandPage() {
       }
     }
   }, [isScanning])
->>>>>>> cf7f0ac (feat: wtf?)
 
   const startScanning = () => {
     setIsScanning(true)
@@ -243,7 +171,7 @@ export default function FoodStandPage() {
     if (currentOrder) {
       //setCompletedOrder(currentOrder);
       orderItems?.forEach((item) => {
-        axios.put("http://localhost:3333/item/"+item.id+"/retrieve")
+        axios.put("http://localhost:3333/item/" + item.id + "/retrieve")
           .then((response) => {
             console.log("foi")
           })
@@ -322,19 +250,19 @@ export default function FoodStandPage() {
                     >
                       <div>
                         <p className="font-medium text-gray-800">
-                          {produto.nome}
+                          {produto.name}
                         </p>
                         <p className="text-sm text-gray-600">
-                          Qtd: {produto.quantidade}
+                          Qtd: 1
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-800">
-                          R$ {produto.preco.toFixed(2)}
+                          R$ {(produto.priceInCents / 100).toFixed(2)}
                         </p>
                         <p className="text-xs text-gray-500">
                           Total: R${" "}
-                          {(produto.preco * produto.quantidade).toFixed(2)}
+                          {(produto.priceInCents / 100).toFixed(2)}
                         </p>
                       </div>
                     </div>

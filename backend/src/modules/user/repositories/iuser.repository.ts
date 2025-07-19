@@ -7,4 +7,5 @@ export abstract class IUserRepository extends RepositoryFactory<UserEntity> {
   }
 
   abstract findByEmail(email: string): Promise<UserEntity | null>;
+  abstract findUserWithOrdersAndItems(id: string): Promise<UserEntity | null>;
 }

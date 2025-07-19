@@ -15,4 +15,17 @@ export class UserPrismaRepository extends IUserRepository {
 
     return user;
   }
+
+  async findUserWithOrdersAndItems(id: string) {
+    return this.prismaService.user.findUnique({
+      where: { id },
+      include: {
+        orders: {
+          include: {
+            orderItems: true
+          }
+        }
+      }
+    });
+  }
 }

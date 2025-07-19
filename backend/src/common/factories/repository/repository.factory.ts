@@ -9,21 +9,13 @@ export abstract class RepositoryFactory<E> {
 
 	create<T>(createDto: T): Promise<E> {
 		return (this.prismaService as any)[this.model].create({
-			data: {
-				...createDto,
-				deletedAt: null,
-			},
+			data: createDto,
 		});
 	}
 
 	createMany<T>(createDtos: T[]): Promise<E[]> {
-		const dto = createDtos.map((createDto) => ({
-			...createDto,
-			deletedAt: null,
-		}));
-
 		return (this.prismaService as any)[this.model].createMany({
-			data: dto,
+			data: createDtos,
 		});
 	}
 
@@ -45,7 +37,6 @@ export abstract class RepositoryFactory<E> {
 		return (this.prismaService as any)[this.model].findFirst({
 			where: {
 				id,
-				deletedAt: null,
 			},
 		});
 	}
@@ -70,7 +61,6 @@ export abstract class RepositoryFactory<E> {
 				id,
 			},
 			data: {
-				deletedAt: new Date(),
 				updatedAt: new Date(),
 			},
 		});
